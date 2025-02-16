@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 2025/2/16
+## 按需引入组件
+直接执行npx shadcn@2.1.0 add button出现错误
+>  `Something went wrong. Please check the error below for more details.
+> If the problem persists, please open an issue on GitHub.
+> 
+> request to https://ui.shadcn.com/r/index.json failed, reason: Client > network socket disconnected before secure TLS connection was established`
 
-## Getting Started
+在github中搜索shadcn-ui别人提交的解决方案
+> 1. Verify network access
+>curl https://ui.shadcn.com/r/index.json  # Should return 200 OK
+>
+> 2. Minimize proxy settings (PowerShell)
+>$env:HTTPS_PROXY="http://127.0.0.1:7890"  # Replace with your proxy port
+>这里写自己的代理地址和端口
+> 3. Run installation with global flag
+>npx --location=global shadcn@latest init
+>这一步好像不用执行，直接执行npx shadcn@2.1.0 add button就能成功
 
-First, run the development server:
+## 利用tailwindcss直接快速自定义组件样式
+__学习成本是否过高？__
+需要非常熟悉css各个属性及英语简写形式
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## NextJS
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+NextJS不需要配置路由，其自带AppRouter 只需要在app的文件夹下建立一个由对应url命名文件夹下再创建一个page.tsx文件即可,同时，如果创建一个layout.tsx的文件.那么就会以此文件作为url的展示页,需要在layout处写入children来渲染page
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+>sign-in/layout.tsx
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    interface SignInLayoutProps {
+        children: React.ReactNode
+    }
+    const SignInLayout = ({ children }:     SignInLayoutProps) => {
+        return (
+            <div className="flex flex-col">
+                <nav className="bg-red-500 h-10">
+                    <p>navbar</p>
+                </nav>
+                {children}
+            </div>
+        )
+    }
 
-## Learn More
+    export default SignInLayout
+若是想要在创建子级url,则可在此文件夹下再创建一个文件夹
 
-To learn more about Next.js, take a look at the following resources:
+## cn()
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+cn可看作classnames 用于动态合并类名或条件渲染类名\
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ts表单 zod结合useForm
 
-## Deploy on Vercel
+    const formSchema = z.object({
+        email: z.string().email(),
+        password: z.string(),
+    })
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    //<T>	泛型语法，告诉函数/组件要用哪种类型
+    //useForm<T>()	告诉 useForm 这个表单的数据类型
+    //z.infer<typeof formSchema>	自动推导 formSchema 里的数据类型
+    //useForm<z.infer<typeof formSchema>>()	让 useForm 知道表单的正确类型
+    
+    const form = useForm<z.infer<typeof formSchema>>({
+            resolver: zodResolver(formSchema),//规则
+            defaultValues: {
+                email: "",
+                password: ""
+            }
+        })
