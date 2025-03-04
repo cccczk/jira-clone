@@ -22,24 +22,25 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from "next/link"
+import { registerSchema } from "../schema"
+import { useRegister } from "../api/use-register"
 // 使用zod快速定义表单数据的验证规则
-const formSchema = z.object({
-    name: z.string().trim().min(1, '此为必填项'),
-    email: z.string().email(),
-    password: z.string().min(8, "此为必填项"),
-})
+
 export const SignUpCard = () => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),//规则
+    const {mutate,isPending} = useRegister()
+    const form = useForm<z.infer<typeof registerSchema>>({
+        resolver: zodResolver(registerSchema),//规则
         defaultValues: {
             name: "",
             email: "",
             password: ""
         }
     })
-    const onSubmit = (value: z.infer<typeof formSchema>) => {
+    const onSubmit = (value: z.infer<typeof registerSchema>) => {
         console.log(value);
-
+        mutate({
+            json: value
+        })
     }
     return (
         <Card className='w-ful h-full md:w-[487px] border-none shadow-none'>
@@ -72,6 +73,7 @@ export const SignUpCard = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={isPending}
                                             type='text'
                                             placeholder='请输入姓名'
                                         />
@@ -88,6 +90,7 @@ export const SignUpCard = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={isPending}
                                             type='email'
                                             placeholder='请输入邮箱号'
                                         />
@@ -104,6 +107,7 @@ export const SignUpCard = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={isPending}
                                             type='password'
                                             placeholder='请输入密码'
                                         />
@@ -112,7 +116,7 @@ export const SignUpCard = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button disabled={false} size='lg' className='w-full'>登录</Button>
+                        <Button disabled={isPending} size='lg' className='w-full'>注册</Button>
                     </form>
                 </Form>
 
@@ -121,11 +125,11 @@ export const SignUpCard = () => {
                 <DottedSeparator />
             </div>
             <CardContent className='p-7 flex flex-col gap-y-4'>
-                <Button disabled={false} variant="secondary" size='lg' className='w-full'>
+                <Button disabled={isPending} variant="secondary" size='lg' className='w-full'>
                     <FcGoogle className="mr-2 size-5" />
                     使用google登录
                 </Button>
-                <Button disabled={false} variant="secondary" size='lg' className='w-full'>
+                <Button disabled={isPending} variant="secondary" size='lg' className='w-full'>
                     <FaGithub className="mr-2 size-5" />
                     使用github登录
                 </Button>

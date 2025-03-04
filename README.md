@@ -59,7 +59,7 @@ cn可看作classnames 用于动态合并类名或条件渲染类名\
     //useForm<T>()	告诉 useForm 这个表单的数据类型
     //z.infer<typeof formSchema>	自动推导 formSchema 里的数据类型
     //useForm<z.infer<typeof formSchema>>()	让 useForm 知道表单的正确类型
-    
+
     const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),//规则
             defaultValues: {
@@ -67,3 +67,47 @@ cn可看作classnames 用于动态合并类名或条件渲染类名\
                 password: ""
             }
         })
+
+
+# 2025/2/17
+## 在api目录下设置文件夹结构
+>使用honojs作为
+
+    /app/api/[[...route]]/route.ts
+## 使用tanstack query提供全局API数据缓存,避免重复请求
+>可以使用reqct query来管理数据而不需要useState来存储API结果
+
+    /app/(auth)/layout.tsx
+    ...
+    <div className="flex flex-col items-center justify-center pt-4 md:pt-4">
+        <QueryProvider >{children}</QueryProvider>
+    </div>
+
+## API管理
+把请求写在/src/features/server/route.ts下,再统一导入到/app/api/[[...route]]/route.ts中
+
+>封装一个登录请求useLogin(自定义hook)
+
+    /features/auth/api/use-login
+
+    import { useMutation } from "@tanstack/react-query";
+    import { InferRequestType, InferResponseType } from "hono";
+    import { client } from '@/lib/rpc'
+    
+    //定义请求和响应的类型 (ResponseType 和 RequestType)。
+    type ResponseType = InferResponseType<typeof client.api.auth.login["$post"]>
+    type RequestType = InferRequestType<typeof client.api.auth.login["$post"]>  ["json"]
+
+    export const useLogin = () => {
+        const mutation = useMutation<
+            ResponseType,
+            Error,
+            RequestType
+        >({
+            mutationFn: async (json) => {
+                const response = await client.api.auth.login["$post"]({ json })
+                return await response.json()
+            }
+        })
+        return mutation
+    }

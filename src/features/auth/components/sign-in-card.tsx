@@ -22,23 +22,25 @@ import {
 } from "@/components/ui/form"
 import { Button } from '@/components/ui/button'
 import Link from "next/link"
+import { loginSchema } from "../schema"
+import { useLogin } from "../api/use-login"
 // 使用zod快速定义表单数据的验证规则
-const formSchema = z.object({
-    email: z.string().min(1, "此为必填项").email(),
-    password: z.string().min(1, "此为必填项"),
-})
 
 export const SignInCard = () => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),//规则
+    const { mutate, isPending } = useLogin()
+
+    const form = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),//规则
         defaultValues: {
             email: "",
             password: ""
         }
     })
-    const onSubmit = (value: z.infer<typeof formSchema>) => {
+    const onSubmit = (value: z.infer<typeof loginSchema>) => {
         console.log(value);
-
+        mutate({
+            json: value,
+        })
     }
     return (
         <Card className='w-ful h-full md:w-[487px] border-none shadow-none'>
@@ -61,6 +63,7 @@ export const SignInCard = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={isPending}
                                             type='email'
                                             placeholder='请输入邮箱号'
                                         />
@@ -77,6 +80,7 @@ export const SignInCard = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={isPending}
                                             type='password'
                                             placeholder='请输入密码'
                                         />
@@ -85,7 +89,7 @@ export const SignInCard = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button disabled={false} size='lg' className='w-full'>登录</Button>
+                        <Button disabled={isPending} size='lg' className='w-full'>登录</Button>
 
                     </form>
                 </Form>
@@ -94,11 +98,11 @@ export const SignInCard = () => {
                 <DottedSeparator />
             </div>
             <CardContent className='p-7 flex flex-col gap-y-4'>
-                <Button disabled={false} variant="secondary" size='lg' className='w-full'>
+                <Button disabled={isPending} variant="secondary" size='lg' className='w-full'>
                     <FcGoogle className="mr-2 size-5" />
                     使用google登录
                 </Button>
-                <Button disabled={false} variant="secondary" size='lg' className='w-full'>
+                <Button disabled={isPending} variant="secondary" size='lg' className='w-full'>
                     <FaGithub className="mr-2 size-5" />
                     使用github登录
                 </Button>
@@ -113,7 +117,7 @@ export const SignInCard = () => {
                         <span className="text-blue-700">
                             &nbsp;去注册
                         </span>
-                        
+
                     </Link>
                 </p>
             </CardContent>

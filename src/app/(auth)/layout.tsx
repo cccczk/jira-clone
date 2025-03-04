@@ -5,7 +5,7 @@ import { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-
+import { QueryProvider } from "@/components/query-provider"
 
 interface AuthLayoutProps {
     children: ReactNode
@@ -29,7 +29,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
                     </Button>
                 </nav>
                 <div className="flex flex-col items-center justify-center pt-4 md:pt-4">
-                    {children}
+                    <QueryProvider >{children}</QueryProvider>
                 </div>
             </div>
         </main>
