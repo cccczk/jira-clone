@@ -29,16 +29,44 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
         resolver: zodResolver(createWorkspacesSchema),
         defaultValues: {
             name: "",
+            image: undefined,
         }
     })
-
     const onSubmit = (values: z.infer<typeof createWorkspacesSchema>) => {
-        const finalValues = {
-            ...values,
-            image: values.image instanceof File ? values.image : ""
+        const formData = new FormData();
+
+        console.log("原始 values:", values); // 检查 values 是否正确
+
+        if (values.name) {
+            formData.append("name", values.name);
+        } else {
+            console.warn("⚠️ name 为空");
         }
-        mutate({ form: finalValues })
-    }
+
+        if (values.image instanceof File) {
+            formData.append("image", values.image);
+        } else {
+            console.warn("⚠️ image 为空或不是 File 类型:", values.image);
+        }
+
+        console.log("最终 formData 内容:", [...formData.entries()]); // 打印 formData 的内容
+
+        mutate(formData, {
+            onSuccess: () => {
+                form.reset()
+            }
+        });
+    };
+
+
+
+    // const onSubmit = (values: z.infer<typeof createWorkspacesSchema>) => {
+    //     const finalValues = {
+    //         ...values,
+    //         image: values.image instanceof File ? values.image : ""
+    //     }
+    //     mutate({ form: finalValues })
+    // }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]

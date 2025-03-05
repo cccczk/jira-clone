@@ -111,3 +111,34 @@ cn可看作classnames 用于动态合并类名或条件渲染类名\
         })
         return mutation
     }
+
+## bug 
+因为file是浏览器环境的API,在服务器端 File 可能是 undefined，或者在 zod 解析过程中 instanceof 可能无法正确识别 File 类型，导致编译错误。
+
+修改 /workspaces/schema.ts
+
+原
+
+    export const createWorkspacesSchema = z.object({
+         name: z.string().trim().min(1, "Required"),
+         image: z.union([
+             z.instanceof(File),
+             z.string().transform((value) => value === "" ? undefined : value),
+         ])
+         .optional()          
+     })
+修改后
+
+    export const createWorkspacesSchema = z.object({
+        name: z.string().trim().min(1, "Required"),
+        image: z
+            .union([
+                z.custom<File>((val) => typeof File !== "undefined" && val instanceof File),
+                z.string().transform((value) => (value === "" ? undefined : value)),
+            ])
+            .optional(),
+    });
+
+此时报错由500变为400 所以开始检查数据格式
+
+一小时无法解决 现在400 =》 200 但是依旧无法上传图片 imageurl为null
