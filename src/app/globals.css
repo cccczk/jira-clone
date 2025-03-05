@@ -76,3 +76,12 @@ body {
     @apply bg-background text-foreground;
   }
 }
+/* Edge */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+/* chrome */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
