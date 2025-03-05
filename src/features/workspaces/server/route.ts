@@ -1,10 +1,12 @@
 import { z } from 'zod'
 import { Hono } from "hono";
 import { zValidator } from '@hono/zod-validator'
-import { ID } from 'node-appwrite';
+import { ID, Query } from 'node-appwrite';
 import { createWorkspacesSchema } from '../schema';
 import { sessionMiddleware } from '@/lib/session-middleware';
-import { DATABASES_ID, IMAGES_BUCKET_ID, WORKSPACES_ID } from '@/config';
+import { DATABASES_ID, IMAGES_BUCKET_ID, WORKSPACES_ID, MEMBERS_ID } from '@/config';
+import { MemberRole } from '@/features/members/types';
+import { generateInviteCode } from '@/lib/utils';
 
 
 // const app = new Hono()
@@ -55,14 +57,34 @@ import { DATABASES_ID, IMAGES_BUCKET_ID, WORKSPACES_ID } from '@/config';
 // export default app
 const app = new Hono()
     .get("/", sessionMiddleware, async (c) => {
+        const user = c.get("user");
         const databases = c.get("databases");
 
+        const members = await databases.listDocuments(
+            DATABASES_ID,
+            MEMBERS_ID,
+            // 匹配登录的用户id
+            [Query.equal("userId", user.$id)]
+        )
+        console.log(members,"members");
+        // 这里已经确保了查询的是当前用户的数据
+        if (members.total === 0) {
+            return c.json({ data: { documents: [], total: 0 } })
+        }
 
+        const workspaceIds = members.documents.map((member) => member.workspaceId)
+        console.log(workspaceIds, "workspaceIds");
+
+        // 查询当前用户的工作区记录
         const workspaces = await databases.listDocuments(
             DATABASES_ID,
             WORKSPACES_ID,
+            [
+                Query.orderDesc("$createdAt"),
+                Query.contains("$id", workspaceIds)
+            ]
         )
-
+        console.log(workspaces);
         return c.json({
             data: workspaces
         })
@@ -113,7 +135,7 @@ const app = new Hono()
                         console.error("文件上传失败:", error);
                     }
                 }
-
+                
                 const workspace = await databases.createDocument(
                     DATABASES_ID,
                     WORKSPACES_ID,
@@ -122,10 +144,24 @@ const app = new Hono()
                         name: formData.name,
                         userId: user.$id,
                         imageUrl: uploadedImageUrl,
+                        inviteCode: generateInviteCode(6)
                     }
                 );
 
                 console.log("创建的 workspace:", workspace);
+
+                await databases.createDocument(
+                    DATABASES_ID,
+                    MEMBERS_ID,
+                    ID.unique(),
+                    {
+                        userId: user.$id,
+                        workspaceId: workspace.$id,
+                        role: MemberRole.ADMIN
+                    }
+                )
+
+
                 return c.json({ data: workspace });
 
             } catch (error) {

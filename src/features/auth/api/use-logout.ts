@@ -21,7 +21,9 @@ export const useLogOut = () => {
         onSuccess: () => {
             toast.success("sucess logout")
             router.refresh()
+            // 重新查询对应数据
             queryClient.invalidateQueries({ queryKey: ["current"] })
+            queryClient.invalidateQueries({ queryKey: ["workspaces"] })
         },
         onError: () => {
             toast.error("Failed to logout")
