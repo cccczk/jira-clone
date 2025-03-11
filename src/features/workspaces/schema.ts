@@ -26,3 +26,8 @@ export const createWorkspacesSchema = z.object({
     name: z.string().min(1, "Required"),
     image: z.any().optional(), // ✅ 允许任何类型，手动解析
 });
+
+export const updateWorkspaceSchema = z.object({
+    name: z.string().min(1, "至少1个或更多字符").optional(),
+    image: z.any().optional(), // ✅ 允许任何类型，手动解析
+});

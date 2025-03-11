@@ -155,3 +155,71 @@ cn可看作classnames 用于动态合并类名或条件渲染类名\
 ## useQueryState和useState
 
 使用 useQueryState 和 useState 的核心区别在于：useQueryState 让状态存储在 URL 查询参数中，而 useState 仅存储在组件的内部状态中。
+
+## 自定义hook获取workspaceId
+
+import { useParams } from "next/navigation";    
+
+export const useWorkspaceId = () => {
+    const params = useParams()
+
+    return params.workspaceId as string
+}
+
+##  bug 调用接口时500 参数错误
+打印form发现为undefined
+
+    const response = await client.api.workspaces[":workspaceId"]["$patch"]({ form,param })
+
+排查mutate时参数可能未正确提交
+
+    const onSubmit = (values: z.infer<typeof updateWorkspaceSchema>) => {
+        const formData = {
+            ...values,
+            image: values.image instanceof File ? values.image : undefined
+        }
+        // 
+        mutate({
+            formData,
+            param: {workspaceId: initialValues.$id}
+        }, {
+            onSuccess: ({ data }) => { 
+                form.reset()
+                // onCancel?.()
+                router.push(`/workspaces/${data.$id}`)
+            }
+        })
+    }
+
+此时formdata还是存在的，能log出来 
+
+改写onsubmit
+
+    const onSubmit = (values: z.infer<typeof updateWorkspaceSchema>) => {
+        const finalValues = {
+            ...values,
+            image: values.image instanceof File ? values.image : ""
+        }
+        console.log("edit formdata",form);
+        
+        mutate({
+            form: finalValues,
+            param: {workspaceId: initialValues.$id}
+        }, {
+            onSuccess: ({ data }) => { 
+                form.reset()
+                // onCancel?.()
+                router.push(`/workspaces/${data.$id}`)
+            }
+        })
+    }
+
+表面问题在于传参错误，后端定义的接收数据为form 我这里直接传formdata命名不一样，报错500 根源问题还是图片上传时nodejs环境下file不存在导致无法上传图片而更改代码引发的错误
+
+## 白屏时间太长
+
+## 后期修改 只剩一人移除成员时无提示 自己是管理员设置自己是成员也没有提示 提示太少
+
+## 创建了error处理界面 通过在app下的error.tsx 和loader
+
+## 登录有时候会突然失效然后无法再次登录

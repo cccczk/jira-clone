@@ -15,6 +15,7 @@ import { useCreateWorkspaces } from "../api/use-create-workspaces"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ImageIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
 
 interface CreateWorkspaceFormProps {
     onCancel?: () => void
@@ -35,43 +36,49 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
             image: undefined,
         }
     })
+    // const onSubmit = (values: z.infer<typeof createWorkspacesSchema>) => {
+    //     const formData = new FormData();
+
+    //     console.log("原始 values:", values); // 检查 values 是否正确
+
+    //     if (values.name) {
+    //         formData.append("name", values.name);
+    //     } else {
+    //         console.warn("⚠️ name 为空");
+    //     }
+
+    //     if (values.image instanceof File) {
+    //         formData.append("image", values.image);
+    //     } else {
+    //         console.warn("⚠️ image 为空或不是 File 类型:", values.image);
+    //     }
+
+    //     console.log("最终 formData 内容:", [...formData.entries()]); // 打印 formData 的内容
+
+    //     mutate(formData, {
+    //         onSuccess: ({data}) => {
+    //             form.reset()
+    //             // onCancel?.()
+    //             router.push(`/workspaces/${data.$id}`)
+    //         }
+    //     });
+    // };
+
+
+
     const onSubmit = (values: z.infer<typeof createWorkspacesSchema>) => {
-        const formData = new FormData();
-
-        console.log("原始 values:", values); // 检查 values 是否正确
-
-        if (values.name) {
-            formData.append("name", values.name);
-        } else {
-            console.warn("⚠️ name 为空");
+        const finalValues = {
+            ...values,
+            image: values.image instanceof File ? values.image : ""
         }
-
-        if (values.image instanceof File) {
-            formData.append("image", values.image);
-        } else {
-            console.warn("⚠️ image 为空或不是 File 类型:", values.image);
-        }
-
-        console.log("最终 formData 内容:", [...formData.entries()]); // 打印 formData 的内容
-
-        mutate(formData, {
-            onSuccess: ({data}) => {
+        mutate({ form: finalValues }, {
+            onSuccess: ({ data }) => {
                 form.reset()
                 // onCancel?.()
                 router.push(`/workspaces/${data.$id}`)
             }
-        });
-    };
-
-
-
-    // const onSubmit = (values: z.infer<typeof createWorkspacesSchema>) => {
-    //     const finalValues = {
-    //         ...values,
-    //         image: values.image instanceof File ? values.image : ""
-    //     }
-    //     mutate({ form: finalValues })
-    // }
+        })
+    }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -154,7 +161,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
                             />
                             <DottedSeparator className="py-7" />
                             <div className="flex items-center justify-between">
-                                <Button type="button" size="lg" variant="secondary" onClick={onCancel} disabled={isPending}>
+                                <Button type="button" size="lg" variant="secondary" onClick={onCancel} disabled={isPending} className={cn(!onCancel && "invisible")}>
                                     取消
                                 </Button>
                                 <Button type="submit" size="lg" variant="primary" disabled={isPending}>
