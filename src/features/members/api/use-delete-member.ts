@@ -14,7 +14,6 @@ export const useDeleteMember = () => {
     >({
         mutationFn: async ({ param }) => {
             const response = await client.api.members[":memberId"]["$delete"]({ param })
-            console.log(param,response);
             
             if (!response.ok) {
                 throw new Error("Failed to Delete member")

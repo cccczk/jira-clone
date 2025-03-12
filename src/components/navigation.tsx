@@ -14,19 +14,19 @@ const routes = [
         activeIcon: GoHomeFill
     },
     {
-        label: "My Tasks",
+        label: "我的任务",
         href: "/tasks",
         icon: GoCheckCircle,
         activeIcon: GoCheckCircleFill
     },
     {
-        label: "Settings",
+        label: "项目设置",
         href: "/settings",
         icon: SettingsIcon,
         activeIcon: SettingsIcon
     },
     {
-        label: "Members",
+        label: "所有成员",
         href: "/members",
         icon: UsersIcon,
         activeIcon: UsersIcon

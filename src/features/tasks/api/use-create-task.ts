@@ -14,7 +14,6 @@ export const useCreateTask = () => {
     >({
         mutationFn: async ({ json }) => {
             const response = await client.api.tasks["$post"]({ json })
-            console.log(json);
             
             if (!response.ok) {
                 throw new Error("Failed to create Task")

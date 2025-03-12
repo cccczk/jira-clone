@@ -42,8 +42,6 @@ export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
         Object.keys(initialTasks).forEach((status) => {
             initialTasks[status as TaskStatus].sort((a, b) => a.position - b.position)
         })
-        // console.log(JSON.stringify(initialTasks) );
-        
         return initialTasks
 
         

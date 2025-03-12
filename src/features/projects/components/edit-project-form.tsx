@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Project } from "../types"
 import { useConfirm } from "@/hooks/use-confirm"
-import { toast } from "sonner"
 import { useUpdateProject } from "../api/use-update-project"
 import { useDeleteProject } from "../api/use-delete-project"
 
@@ -34,7 +33,7 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
     const { mutate, isPending } = useUpdateProject()
     const {
         mutate: deleteProject,
-        isPending: isDeletingWorkspace
+        isPending: isDeletingProject
     } = useDeleteProject()
 
 
@@ -64,7 +63,9 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
             param: { projectId: initialValues.$id }
         }, {
             onSuccess() {
-                window.location.href=`/workspaces/${initialValues.workspaceId}`
+                setTimeout(() => {
+                    window.location.href = `/workspaces/${initialValues.workspaceId}`;
+                }, 0);
             },
         })
     }
@@ -74,15 +75,9 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
             ...values,
             image: values.image instanceof File ? values.image : ""
         }
-        console.log("edit formdata", form);
-
         mutate({
             form: finalValues,
             param: { projectId: initialValues.$id }
-        }, {
-            onSuccess: () => {
-                form.reset()
-            }
         })
     }
 
@@ -161,8 +156,8 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
                                                     <p className="text-sm text-muted-foreground">
                                                         JPG, PNG, SVG or JPEG, max 1MB
                                                     </p>
-                                                    <input className="hidden" accept=".jpg, .png, .jpeg, .svg" type="file" ref={inputRef} disabled={isPending} onChange={handleImageChange} />
-                                                    <Button type="button" disabled={isPending} variant="teritary" size="xs" className="w-fit mt-2" onClick={() => inputRef.current?.click()}>
+                                                    <input className="hidden" accept=".jpg, .png, .jpeg, .svg" type="file" ref={inputRef} disabled={isPending || isDeletingProject} onChange={handleImageChange} />
+                                                    <Button type="button" disabled={isPending || isDeletingProject} variant="teritary" size="xs" className="w-fit mt-2" onClick={() => inputRef.current?.click()}>
                                                         Upload Image
                                                     </Button>
                                                 </div>
@@ -175,7 +170,7 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
                                     <Button type="button" size="lg" variant="secondary" onClick={onCancel} disabled={isPending} className={cn(!onCancel && "invisible")}>
                                         取消
                                     </Button>
-                                    <Button type="submit" size="lg" variant="primary" disabled={isPending}>
+                                    <Button type="submit" size="lg" variant="primary" disabled={isPending || isDeletingProject}>
                                         保存更改
                                     </Button>
                                 </div>
@@ -202,7 +197,7 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
                             size="sm"
                             variant="destructive"
                             type="button"
-                            disabled={isPending}
+                            disabled={isPending || isDeletingProject}
                             onClick={handleDelete}
                         >
                             删除项目

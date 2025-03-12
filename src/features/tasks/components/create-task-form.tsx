@@ -1,7 +1,6 @@
 "use client"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useRef } from "react"
 import { useForm } from "react-hook-form"
 import { createTaskSchema } from "../schema"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,7 +9,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { DottedSeparator } from "@/components/dotted-separator"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id"
@@ -30,11 +28,8 @@ interface CreateTaskFormProps {
 
 export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: CreateTaskFormProps) => {
     const workspaceId = useWorkspaceId()
-    const router = useRouter()
 
     const { mutate, isPending } = useCreateTask()
-
-    const inputRef = useRef<HTMLInputElement>(null)
 
     const form = useForm<z.infer<typeof createTaskSchema>>({
         resolver: zodResolver(createTaskSchema),
@@ -46,7 +41,7 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
 
     const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
         mutate({ json: { ...values, workspaceId } }, {
-            onSuccess: ({data}) => {
+            onSuccess: () => {
                 form.reset()
                 onCancel?.()
                 // router.push(`/workspaces/${data.workspaceId}/projects/${data.$id}`);

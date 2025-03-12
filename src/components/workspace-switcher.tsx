@@ -23,7 +23,7 @@ export const WorkspacesSwitcher = () => {
     return (
         <div className="flex flex-col gap-y-2">
             <div className="flex items-center justify-between">
-                <p className="text-xs uppercase text-neutral-500">Workspaces</p>
+                <p className="text-xs uppercase text-neutral-500">当前工作区</p>
                 <RiAddCircleFill onClick={open} className="size-5 text-neutral-500 cursor-pointer hover:opcity-75 transition" />
             </div>
             <Select onValueChange={onSelect} value={workspaceId}>

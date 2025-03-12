@@ -14,7 +14,6 @@ export const useUpdateMember = () => {
     >({
         mutationFn: async ({ param,json }) => {
             const response = await client.api.members[":memberId"]["$patch"]({ param ,json})
-            console.log(param,response);
             
             if (!response.ok) {
                 throw new Error("Failed to Update member")

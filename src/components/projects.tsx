@@ -24,7 +24,7 @@ export const Projets = () => {
     return (
         <div className="flex flex-col gap-y-2">
             <div className="flex items-center justify-between">
-                <p className="text-xs uppercase text-neutral-500">Projects</p>
+                <p className="text-xs uppercase text-neutral-500">所有项目</p>
                 <RiAddCircleFill onClick={open} className="size-5 text-neutral-500 cursor-pointer hover:opcity-75 transition" />
             </div>
             {data?.documents.map((project) => {

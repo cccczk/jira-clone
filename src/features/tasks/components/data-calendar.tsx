@@ -13,6 +13,7 @@ import { zhCN } from "date-fns/locale"
 
 import { Task } from "../types";
 import { useState } from "react";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require("react-big-calendar/lib/css/react-big-calendar.css")
 import './data-calendar.css'
 import { EventCard } from "./event-card";

@@ -1,14 +1,37 @@
+"use client"
 import { UserButton } from "@/features/auth/components/user-button"
 import { MobileSidebar } from "./mobile-sidebar"
+import { usePathname } from "next/navigation"
 
+const pathnameMap = {
+    "tasks": {
+        title: "我的任务",
+        description: "在这里查看你的所有任务"
+    },
+    "project": {
+        title: "我的项目",
+        description: "在这里查看你的所有项目"
+    },
+}
+
+const defaultMap = {
+    title: "主页",
+    description: "在这里监控你的所有项目和任务"
+}
 export const Navbar = () => {
+    const pathname = usePathname()
+    const pathnameParts = pathname.split("/")
+    const pathnameKey = pathnameParts[3] as keyof typeof pathnameMap
+
+    const { title, description } = pathnameMap[pathnameKey] || defaultMap
+
     return (
         <nav className="pt-4 px-6 flex items-center justify-between">
             <div className="flex-col hidden lg:flex">
                 <h1 className="text-2xl font-semibold">
-                    主页
+                    {title}
                 </h1>
-                <p className="text-muted-foreground"> 在这里监控你的所有项目和任务</p>
+                <p className="text-muted-foreground"> {description}</p>
             </div>
             {/* 始终显示mobilesidebar是否会影响性能？ */}
             <MobileSidebar />

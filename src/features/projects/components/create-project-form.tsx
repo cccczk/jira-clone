@@ -12,7 +12,7 @@ import { DottedSeparator } from "@/components/dotted-separator"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ImageIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -40,36 +40,7 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
             workspaceId
         }
     })
-    // const onSubmit = (values: z.infer<typeof createWorkspacesSchema>) => {
-    //     const formData = new FormData();
-
-    //     console.log("原始 values:", values); // 检查 values 是否正确
-
-    //     if (values.name) {
-    //         formData.append("name", values.name);
-    //     } else {
-    //         console.warn("⚠️ name 为空");
-    //     }
-
-    //     if (values.image instanceof File) {
-    //         formData.append("image", values.image);
-    //     } else {
-    //         console.warn("⚠️ image 为空或不是 File 类型:", values.image);
-    //     }
-
-    //     console.log("最终 formData 内容:", [...formData.entries()]); // 打印 formData 的内容
-
-    //     mutate(formData, {
-    //         onSuccess: ({data}) => {
-    //             form.reset()
-    //             // onCancel?.()
-    //             router.push(`/workspaces/${data.$id}`)
-    //         }
-    //     });
-    // };
-
-
-
+    
     const onSubmit = (values: z.infer<typeof createProjectSchema>) => {
         const finalValues = {
             ...values,

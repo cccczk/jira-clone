@@ -223,3 +223,6 @@ export const useWorkspaceId = () => {
 ## 创建了error处理界面 通过在app下的error.tsx 和loader
 
 ## 登录有时候会突然失效然后无法再次登录
+
+## setting page的集体问题
+updateproject后 已经在editprojectform删除了form.reset还是没用 表单会重置为修改前的值 但是刷新浏览器又正常

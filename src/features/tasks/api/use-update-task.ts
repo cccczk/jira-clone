@@ -14,11 +14,7 @@ export const useUpdateTask = () => {
         RequestType
     >({
         mutationFn: async ({ json, param }) => {
-
-            console.log(param);
             const response = await client.api.tasks[":taskId"]["$patch"]({ json, param })
-            console.log(param);
-
             if (!response.ok) {
                 throw new Error("Failed to Update Task")
             }
@@ -30,9 +26,7 @@ export const useUpdateTask = () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] })
             queryClient.invalidateQueries({ queryKey: ["task", data.$id] })
         },
-        onError: (err) => {
-            console.log(err);
-            
+        onError: () => {
             toast.error("Failed to Update Task")
         }
     })
