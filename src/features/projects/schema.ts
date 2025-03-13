@@ -10,5 +10,4 @@ export const createProjectSchema = z.object({
 export const updateProjectSchema = z.object({
     name: z.string().min(1, "最少需要一个字符").optional(),
     image: z.any().optional(), // ✅ 允许任何类型，手动解析
-
 });

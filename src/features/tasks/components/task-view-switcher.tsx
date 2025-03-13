@@ -92,7 +92,6 @@ export const TaskViewSwitcher = ({ hideProjectFilter }: TaskViewSwitcherProps) =
                     </Button>
                 </div>
                 <DottedSeparator className="my-4" />
-                {/* Add filters */}
                 <DataFilters hideProjectFilter={hideProjectFilter} />
                 <DottedSeparator className="my-4" />
                 {isLoadingTasks ? (
