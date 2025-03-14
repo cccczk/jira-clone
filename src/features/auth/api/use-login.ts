@@ -27,7 +27,7 @@ export const useLogin = () => {
             queryClient.invalidateQueries({ queryKey: ["current"] })
         },
         onError: () => {
-            toast.error("Failed to create workspace")
+            toast.error("Failed to login")
         }
     })
     return mutation

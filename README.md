@@ -226,3 +226,7 @@ export const useWorkspaceId = () => {
 
 ## setting page的集体问题
 updateproject后 已经在editprojectform删除了form.reset还是没用 表单会重置为修改前的值 但是刷新浏览器又正常
+
+## bug
+点击编辑任务 提交按钮无效
+点击打开项目没有对应页面

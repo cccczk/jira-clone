@@ -38,7 +38,7 @@ export const TaskActions = ({ id, projectId, children }: TaskActionsProps) => {
     }
 
     const onOpenProject = () => {
-        router.push(`/workspaces/${workspaceId}/tasks/${projectId}`)
+        router.push(`/workspaces/${workspaceId}/projects/${projectId}`)
     }
     return (
         <div className="felx justify-end">

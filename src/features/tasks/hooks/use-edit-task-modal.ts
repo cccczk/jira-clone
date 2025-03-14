@@ -3,12 +3,15 @@
 import { useQueryState, parseAsString } from "nuqs"
 
 export const useEditTaskModal = () => {
+    
+    
     const [taskId,setTaskId] = useQueryState(
         "edit-task",
         parseAsString
     )
 
-    const open = (id:string) => {
+    const open = (id: string) => {
+        console.log("use edit task modal",id);
         setTaskId(id)
     }
 

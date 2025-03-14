@@ -1,4 +1,5 @@
 "use client"
+
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -38,9 +39,14 @@ export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialV
             dueDate: initialValues.dueDate ? new Date(initialValues.dueDate) : undefined,
         },
     });
-
+    const result = createTaskSchema.safeParse(form.getValues());
+    if (!result.success) {
+        console.log("校验失败:", result.error.format());
+    }
+    
 
     const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
+        console.log(values);
         mutate({ json: values, param: { taskId: initialValues.$id } }, {
             onSuccess: () => {
                 form.reset()
@@ -209,7 +215,7 @@ export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialV
                                 <Button type="button" size="lg" variant="secondary" onClick={onCancel} disabled={isPending} className={cn(!onCancel && "invisible")}>
                                     取消
                                 </Button>
-                                <Button type="submit" size="lg" variant="primary" disabled={isPending}>
+                                <Button type="submit" size="lg" variant="primary" disabled={isPending} onClick={() => console.log("提交按钮被点击")}>
                                     保存更改
                                 </Button>
                             </div>
