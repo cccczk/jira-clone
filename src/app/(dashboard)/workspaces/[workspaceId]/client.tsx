@@ -21,17 +21,24 @@ import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id"
 import { formatDistanceToNow } from "date-fns"
 import { CalendarIcon, PlusIcon, SettingsIcon } from "lucide-react"
 import Link from "next/link"
+import { useCallback, useEffect } from "react"
+import { toast } from "sonner"
 
 export const WorkspaceIdClient = () => {
     const workspaceId = useWorkspaceId()
+    const { open } = useCreateProjectModal()
     const { data: analytics, isLoading: isLoadingAnalytics } = useGetWorkspaceAnalytics({ workspaceId })
     const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({ workspaceId })
     const { data: projects, isLoading: isLoadingProjects } = useGetProjects({ workspaceId })
     const { data: members, isLoading: isLoadingMembers } = useGetMembers({ workspaceId })
-
-
-
-
+    const createProject = useCallback(() => {
+        open();
+    }, [open]);
+    useEffect(() => {
+        if (projects && projects.total === 0) {
+            createProject();
+        }
+    }, [projects]);
     const isLoading =
         isLoadingAnalytics ||
         isLoadingMembers ||
@@ -43,13 +50,14 @@ export const WorkspaceIdClient = () => {
     if (!analytics || !tasks || !projects || !members) {
         return <PageError message="获取工作区数据失败" />
     }
+
     return (
         <div className="h-full flex flex-col space-y-4">
             <Analytics data={analytics} />
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                <TaskList data={tasks.documents} total={tasks.total} />
+                <TaskList data={tasks.documents} total={tasks.total} isProjectExist={projects.total === 0 ? false : true} />
                 <ProjectList data={projects.documents} total={projects.total} />
-                <MemberList data={members.documents} total={members.total}/>
+                <MemberList data={members.documents} total={members.total} />
             </div>
         </div>
     )
@@ -57,12 +65,29 @@ export const WorkspaceIdClient = () => {
 
 interface TaskListProps {
     data: Task[],
-    total: number
+    total: number,
+    isProjectExist: boolean
 }
 
-export const TaskList = ({ data, total }: TaskListProps) => {
+export const TaskList = ({ data, total, isProjectExist }: TaskListProps) => {
     const workspaceId = useWorkspaceId()
+    const { open: createProject } = useCreateProjectModal()
     const { open: createTask } = useCreateTaskModal()
+    const createNewTask = () => {
+        console.log(isProjectExist);
+        if (isProjectExist) {
+            createTask()
+        } else {
+            toast.warning("需要先创建项目后再创建任务", {
+                className: "bg-blue-100",
+                action: {
+                    label: "去创建项目",
+                    onClick: () => createProject(),
+                },
+            })
+        }
+
+    }
     return (
         <div className="flex flex-col gap-y-4 col-span-1">
             <div className="bg-muted rounded-lg p-4">
@@ -70,9 +95,9 @@ export const TaskList = ({ data, total }: TaskListProps) => {
                     <p className="txet-lg font-semibold">
                         任务数量: ({total})
                     </p>
-                    <Button variant="muted" size="icon" onClick={createTask}>
+                    <Button variant="muted" size="lg" onClick={createNewTask}>
                         <PlusIcon className="szie-4 text-neutral-400" />
-
+                        创建一个新任务
                     </Button>
                 </div>
                 <DottedSeparator className="my-4" />
@@ -96,17 +121,18 @@ export const TaskList = ({ data, total }: TaskListProps) => {
                                     </CardContent>
                                 </Card>
                             </Link>
+                            <Button variant="muted" className="mt-4 w-full" asChild>
+                                <Link href={`/workspaces/${workspaceId}/tasks`}>
+                                    展示所有任务
+                                </Link>
+                            </Button>
                         </li>
                     ))}
                     <li className="text-sm text-muted-foreground text-center hidden first-of-type:block">
                         暂时没有任务
                     </li>
                 </ul>
-                <Button variant="muted" className="mt-4 w-full" asChild>
-                    <Link href={`/workspaces/${workspaceId}/tasks`}>
-                        展示所有任务
-                    </Link>
-                </Button>
+                
             </div>
         </div>
     )
@@ -127,8 +153,9 @@ export const ProjectList = ({ data, total }: ProjectListProps) => {
                     <p className="txet-lg font-semibold">
                         项目数量: ({total})
                     </p>
-                    <Button variant="secondary" size="icon" onClick={createProject}>
+                    <Button variant="secondary" size="lg" onClick={createProject}>
                         <PlusIcon className="szie-4 text-neutral-400" />
+                        创建一个新项目
                     </Button>
                 </div>
                 <DottedSeparator className="my-4" />

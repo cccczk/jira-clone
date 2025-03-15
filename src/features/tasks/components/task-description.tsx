@@ -30,14 +30,14 @@ export const TaskDescription = ({ task }: TaskDescriptionProps) => {
     return (
         <div className="p-4 border rounded-lg">
             <div className="flex items-center justify-between">
-                <p className="text-lg font-semibold">Overview</p>
+                <p className="text-lg font-semibold">任务描述</p>
                 <Button onClick={() => setIsEditing((prev) => !prev)} size="sm" variant="secondary">
                     {isEditing ? (
                         <XIcon className="size-4 mr-2" />
                     ) : (
                         <PencilIcon className="size-4 mr-2" />
                     )}
-                    {isEditing ? "取消编辑" : "编辑任务"}
+                    {isEditing ? "取消" : "修改"}
                 </Button>
             </div>
             <DottedSeparator className="my-4" />

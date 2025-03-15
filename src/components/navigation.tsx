@@ -20,7 +20,7 @@ const routes = [
         activeIcon: GoCheckCircleFill
     },
     {
-        label: "项目设置",
+        label: "工作区设置",
         href: "/settings",
         icon: SettingsIcon,
         activeIcon: SettingsIcon

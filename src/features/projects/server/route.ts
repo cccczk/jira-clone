@@ -8,7 +8,7 @@ import { getMember } from "@/features/members/utils";
 import { createProjectSchema, updateProjectSchema } from "../schema";
 import { Project } from "../types";
 import {endOfMonth, startOfMonth, subMonths } from "date-fns";
-import { TaskStatus } from "@/features/tasks/types";
+import { Task, TaskStatus } from "@/features/tasks/types";
 
 const app = new Hono()
     .post(
@@ -263,9 +263,12 @@ const app = new Hono()
             if (!member) {
                 return c.json({ error: "Unauthorized" }, 401)
             }
+            const tasks = await databases.listDocuments<Task>(DATABASES_ID, TASKS_ID, [Query.equal('projectId', projectId)]);
 
-            // todo: delete tasks
-
+            // delete tasks
+            for (const task of tasks.documents) {
+                await databases.deleteDocument(DATABASES_ID, TASKS_ID, task.$id);
+            }
             await databases.deleteDocument(
                 DATABASES_ID,
                 PROJECTS_ID,

@@ -11,6 +11,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { zhCN } from "date-fns/locale"
 
 interface DatePickerProps {
     value: Date | undefined;
@@ -33,7 +34,7 @@ export const DatePicker = ({ value, onChange, className, placeholder }: DatePick
                     )}
                 >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {value ? format(value, "PPP") : <span>{placeholder}</span>}
+                    {value ? format(value, "PPP",{locale: zhCN}) : <span>{placeholder}</span>}
                 </Button>
             </PopoverTrigger >
             <PopoverContent className="w-atuo p-0">

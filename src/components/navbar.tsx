@@ -8,9 +8,9 @@ const pathnameMap = {
         title: "我的任务",
         description: "在这里查看你的所有任务"
     },
-    "project": {
+    "projects": {
         title: "我的项目",
-        description: "在这里查看你的所有项目"
+        description: "在这里查看你该项目下的所有任务"
     },
 }
 
